@@ -1,0 +1,5 @@
+from django.contrib import admin
+from backlog.models import Issue
+# Register your models here.
+
+admin.site.register(Issue)

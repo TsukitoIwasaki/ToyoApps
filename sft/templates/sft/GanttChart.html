@@ -1,0 +1,170 @@
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv='X-UA-Compatible' content='IE=Edge' />
+		<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.css' />
+		<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar-scheduler/1.6.2/scheduler.min.css' />
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js'></script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js'></script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar-scheduler/1.6.2/scheduler.min.js'></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/locale/ja.js"></script>
+		<script>
+
+			$(function() {
+
+				$('#calendar').fullCalendar({
+					schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
+					defaultDate: '2020-06-03',
+					now: '"&~now&"',
+					nowIndicator: true,
+					editable: true,
+					selectable: true,
+					selectHelper: true,
+					height: 300,
+					contentHeight: 300,
+					slotDuration: '00:30:00',
+					slotLabelInterval: '1:00',
+					minTime: '07:00:00',
+				    maxTime: '23:00:00',
+					resourceAreaWidth: '10%',
+					scrollTime: '03:00',
+					header: false,
+					defaultView: 'timelineDay',
+					resourceLabelText: '氏名',
+
+					select: function (start, end, allDay) {
+                    var title = prompt("Enter Event Title");
+                    if (title) {
+                        var start = $.fullCalendar.formatDate(start, "Y-MM-DD HH:mm:ss");
+                        var end = $.fullCalendar.formatDate(end, "Y-MM-DD HH:mm:ss");
+                        $.ajax({
+                            type: "GET",
+                            url: 'add_event/',
+                            data: {'title': title, 'start': start, 'end': end},
+                            dataType: "json",
+                            success: function (data) {
+                                calendar.fullCalendar('refetchEvents');
+                                alert("Added Successfully");
+                            },
+                            failure: function (data) {
+                                alert('There is a problem!!!');
+                            }
+                        });
+                    }
+                },
+				 eventResize: function (event) {
+                    var start = $.fullCalendar.formatDate(event.start, "Y-MM-DD HH:mm:ss");
+                    var end = $.fullCalendar.formatDate(event.end, "Y-MM-DD HH:mm:ss");
+                    var title = event.title;
+                    var id = event.id;
+                    var resourceId = event.resouceId;
+                    $.ajax({
+                        type: "GET",
+                        url: '/update',
+                        data: {'title': title, 'start': start, 'end': end, 'id': id, 'resourceId': resourceId},
+                        dataType: "json",
+                        success: function (data) {
+                            calendar.fullCalendar('refetchEvents');
+                            alert('Event Update');
+                        },
+                        failure: function (data) {
+                            alert('There is a problem!!!');
+                        }
+                    });
+                },
+				eventDrop: function (event) {
+                    var start = $.fullCalendar.formatDate(event.start, "Y-MM-DD HH:mm:ss");
+                    var end = $.fullCalendar.formatDate(event.end, "Y-MM-DD HH:mm:ss");
+                    var title = event.title;
+                    var id = event.id;
+                    var resourceId = event.resouceId;
+                    $.ajax({
+                        type: "GET",
+                        url: '/update',
+                        data: {'title': title, 'start': start, 'end': end, 'id': id, 'resourceId': resourceId},
+                        dataType: "json",
+                        success: function (data) {
+                            calendar.fullCalendar('refetchEvents');
+                            alert('Event Update');
+                        },
+                        failure: function (data) {
+                            alert('There is a problem!!!');
+                        }
+                    });
+                },
+
+				eventClick: function (event) {
+                    if (confirm("Are you sure you want to remove it?")) {
+                        var id = event.id;
+                        $.ajax({
+                            type: "GET",
+                            url: '/remove',
+                            data: {'id': id},
+                            dataType: "json",
+                            success: function (data) {
+                                calendar.fullCalendar('refetchEvents');
+                                alert('Event Removed');
+                            },
+                            failure: function (data) {
+                                alert('There is a problem!!!');
+                            }
+                        });
+                    }
+                },
+
+					resources: [
+						{% for user in users %}
+								{
+									'id': '{{user.id }}',
+									'title': '{{ user.name }}',
+									'building' : 10
+								},
+							{% endfor %}
+					],
+                     events: [
+                     		{% for schedule in schedules %}
+								{
+									'id': '{{schedule.id }}',
+									'end': '{{ schedule.startDate }}T{{ schedule.endDate }}',
+									'start':'{{ schedule.startDate }}T{{ schedule.startDate }}',
+									'resourceId':'{{ schedule.userId}}',
+									'title':'{{ schedule.title }}'
+								},
+							{% endfor %}
+					 ]
+
+				});
+
+			});
+
+		</script>
+		<style>
+
+			body {
+				margin: 0;
+				padding: 0;
+				font-family: Arial;
+				font-size: 14px;
+			}
+
+			#calendar {
+				max-width: 1630px;
+				margin: 5px auto;
+			}
+
+		</style>
+
+	</head>
+	<body style='border:0;padding:0;margin:0;'>
+	<div class="TOP">
+		<a href="{% url 'sft:index' %}">
+			<img src="{% static 'sft/img/smileinit.png' %}" class="img-fluid" width="50pt">
+			<img src="{% static 'sft/img/logo.png' %}" class="img-fluid" width="100pt">
+		</a>
+	</div>
+		<div id='calendar'></div>
+	</body>
+</html>

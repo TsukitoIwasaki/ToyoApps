@@ -1,0 +1,24 @@
+{% extends 'slack/base.html' %}
+
+{% block content %}
+    <h1>部署詳細</h1>
+    <hr>
+    <form method="POST" class="post-form">
+        {% csrf_token %}
+        <div class="center">
+            <table>
+                <tr>
+                    <th>部署名</th>
+                    <td>{{ form.name }}</td>
+                </tr>
+                <tr>
+                    <th>支店</th>
+                    <td>{{ form.branch }}</td>
+                </tr>
+            </table>
+
+        </div>
+
+        <button type="submit" class="btn-square box">保存</button>
+    </form>
+{% endblock %}

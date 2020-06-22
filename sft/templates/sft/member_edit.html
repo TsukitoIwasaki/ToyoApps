@@ -1,0 +1,30 @@
+{% extends 'sft/base.html' %}
+
+{% block content %}
+    <h3 class="mt-4 border-bottom">社員詳細</h3>
+    <form method="POST" class="post-form">
+        {% csrf_token %}
+        <div>
+            <table class="center">
+                <tr>
+                    <th>名前</th>
+                    <td>{{ form.name }}</td>
+                </tr>
+                <tr>
+                    <th>社員コード</th>
+                    <td>{{ form.user_code }}</td>
+                </tr>
+                <tr>
+                    <th>雇用形態</th>
+                    <td>{{ form.employment_status }}</td>
+                </tr>
+                <tr>
+                    <th>備考</th>
+                    <td>{{ form.comment }}</td>
+                </tr>
+            </table>
+
+        </div>
+        <button type="submit" class="btn-square box">保存</button>
+    </form>
+{% endblock %}

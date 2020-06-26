@@ -21,6 +21,7 @@ class SlackMember(models.Model):
     update_time = models.DateTimeField('投稿時間', null=True, blank=True)
     department = models.ForeignKey('Department', verbose_name='部署',on_delete=models.SET_NULL, blank=True, null=True, related_name='department_name')
     account = models.CharField('アカウント', max_length=255, null=True, blank=True)
+    flg_seat = models.CharField('座席不要フラグ', max_length=255, null=True, blank=True, default=0)
 
     def __str__(self):
         return self.name

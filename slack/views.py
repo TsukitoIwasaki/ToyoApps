@@ -10,6 +10,7 @@ from django.contrib import messages
 from slack.get_slack_message import get_slack
 from slack.create_random_number import GetNumber
 from slack.get_slackuser_list import create_user
+from slack.seat_json import GetSeat
 from slack.models import Message, SlackMember, Department, Seat
 from slack.update_status import update_status
 # from .get_googleEvent import getGoogleEvent
@@ -167,8 +168,11 @@ def create_seat(request ,user_id=None):
     user_id = user_id
     d = 52
     num = ''
+    seat=''
     if user_id:
         num = GetNumber(d, user_id)
-    dict = {'num':num}
+    if Seat.objects.filter(eventDate=now):
+        seat=GetSeat(d)
+    dict = {'num':num,'seat':seat}
     return render(request,
                   'slack/seat.html', dict )  # テンプレートに渡すデータ
